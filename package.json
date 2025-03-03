@@ -1,0 +1,31 @@
+{
+  "name": "revealjs-live-preview",
+  "displayName": "Reveal.js Live Preview",
+  "description": "Live preview of Reveal.js slides inside VSCode",
+  "version": "1.0.0",
+  "publisher": "Prajwol Amatya",
+  "type": "commonjs",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "revealjsLivePreview.start",
+        "title": "Start Reveal.js Preview"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint --config eslint.config.js",
+    "lint:fix": "eslint --config eslint.config.js --fix"
+  },
+  "devDependencies": {
+    "eslint": "^9.21.0",
+    "vscode": "^1.1.37"
+  }
+}
