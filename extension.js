@@ -1,4 +1,5 @@
 const vscode = require('vscode')
+const path = require('path')
 const fs = require('fs')
 
 /**
@@ -17,12 +18,12 @@ function activate(context) {
             'revealjsPreview',
             'Reveal.js Preview',
             vscode.ViewColumn.Two,
-            { enableScripts: true }
+            { enableScripts: true, localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js'))] }
         )
 
         function updatePreview() {
             const markdownContent = fs.readFileSync(filePath, 'utf8')
-            panel.webview.html = getWebviewContent(markdownContent, panel.webview)
+            panel.webview.html = getWebviewContent(markdownContent, panel.webview, context)
         }
 
         updatePreview()
@@ -45,20 +46,37 @@ function activate(context) {
  * @param {string} markdownContent
  * @returns {string} HTML string
  */
-function getWebviewContent(markdownContent) {
+function getWebviewContent(markdownContent, webview, context) {
+    const revealCss = webview.asWebviewUri(
+        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'dist', 'reveal.css'))
+    )
+    const themeCss = webview.asWebviewUri(
+        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'dist', 'theme', 'white.css'))
+    )
+    const revealJs = webview.asWebviewUri(
+        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'dist', 'reveal.js'))
+    )
+    const markdownPlugin = webview.asWebviewUri(
+        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'plugin', 'markdown', 'markdown.js'))
+    )
+    const highlightPlugin = webview.asWebviewUri(
+        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'plugin', 'highlight', 'highlight.js'))
+    )
+
     return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>Reveal.js Preview</title>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/white.css">
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+  <link rel="stylesheet" href="${revealCss}">
+  <link rel="stylesheet" href="${themeCss}">
+  <script src="${revealJs}"></script>
+  <script src="${markdownPlugin}"></script>
+  <script src="${highlightPlugin}"></script>
   <script>
     function startReveal() {
       Reveal.initialize({
-        plugins: [ RevealMarkdown ]
+        plugins: [ RevealMarkdown, RevealHighlight ]
       });
     }
   </script>
