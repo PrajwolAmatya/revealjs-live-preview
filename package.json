@@ -18,6 +18,13 @@
         "command": "revealjsLivePreview.start",
         "title": "Start Reveal.js Preview"
       }
+    ],
+    "keybindings": [
+      {
+        "command": "revealjsLivePreview.start",
+        "key": "ctrl+alt+r",
+        "when": "editorLangId == markdown"
+      }
     ]
   },
   "scripts": {
