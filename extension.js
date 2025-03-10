@@ -18,12 +18,22 @@ function activate(context) {
             'revealjsPreview',
             'Reveal.js Preview',
             vscode.ViewColumn.Two,
-            { enableScripts: true, localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js'))] }
+            { 
+                enableScripts: true,
+                localResourceRoots: [
+                    vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js'))
+                ]
+            }
         )
 
         function updatePreview() {
             const markdownContent = fs.readFileSync(filePath, 'utf8')
-            panel.webview.html = getWebviewContent(markdownContent, panel.webview, context)
+
+            // Read user-selected theme from settings
+            const config = vscode.workspace.getConfiguration('revealjsLivePreview')
+            const selectedTheme = config.get('theme', 'white')
+
+            panel.webview.html = getWebviewContent(markdownContent, panel.webview, context, selectedTheme)
         }
 
         updatePreview()
@@ -46,21 +56,28 @@ function activate(context) {
  * @param {string} markdownContent
  * @returns {string} HTML string
  */
-function getWebviewContent(markdownContent, webview, context) {
+function getWebviewContent(markdownContent, webview, context, theme) {
+    const revealBasePath = vscode.Uri.file(
+        path.join(context.extensionPath, 'node_modules', 'reveal.js')
+    )
+
     const revealCss = webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'dist', 'reveal.css'))
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.css'))
     )
+
+    // Use the user-selected theme dynamically
     const themeCss = webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'dist', 'theme', 'white.css'))
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'theme', `${theme}.css`))
     )
+
     const revealJs = webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'dist', 'reveal.js'))
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.js'))
     )
     const markdownPlugin = webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'plugin', 'markdown', 'markdown.js'))
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'markdown', 'markdown.js'))
     )
     const highlightPlugin = webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js', 'plugin', 'highlight', 'highlight.js'))
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'highlight', 'highlight.js'))
     )
 
     return `<!DOCTYPE html>
@@ -70,18 +87,8 @@ function getWebviewContent(markdownContent, webview, context) {
   <title>Reveal.js Preview</title>
   <link rel="stylesheet" href="${revealCss}">
   <link rel="stylesheet" href="${themeCss}">
-  <script src="${revealJs}"></script>
-  <script src="${markdownPlugin}"></script>
-  <script src="${highlightPlugin}"></script>
-  <script>
-    function startReveal() {
-      Reveal.initialize({
-        plugins: [ RevealMarkdown, RevealHighlight ]
-      });
-    }
-  </script>
 </head>
-<body onload="startReveal()">
+<body>
   <div class="reveal">
     <div class="slides">
       <section data-markdown>
@@ -89,6 +96,14 @@ function getWebviewContent(markdownContent, webview, context) {
       </section>
     </div>
   </div>
+  <script src="${revealJs}"></script>
+  <script src="${markdownPlugin}"></script>
+  <script src="${highlightPlugin}"></script>
+  <script>
+    Reveal.initialize({
+      plugins: [ RevealMarkdown, RevealHighlight ]
+    });
+  </script>
 </body>
 </html>`
 }

@@ -25,7 +25,27 @@
         "key": "ctrl+alt+r",
         "when": "editorLangId == markdown"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Reveal.js Live Preview",
+      "properties": {
+        "revealjsLivePreview.theme": {
+          "type": "string",
+          "default": "white",
+          "enum": [
+            "black",
+            "white",
+            "league",
+            "moon",
+            "night",
+            "serif",
+            "simple",
+            "solarized"
+          ],
+          "description": "Select the theme for Reveal.js slides."
+        }
+      }
+    }
   },
   "scripts": {
     "lint": "eslint --config eslint.config.js",
