@@ -2,9 +2,52 @@ const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
 
-/**
- * @param {vscode.ExtensionContext} context
- */
+// Updates the preview with latest changes
+function updatePreview(filePath, context, panel) {
+    const markdownContent = fs.readFileSync(filePath, 'utf8')
+
+    // Get user settings
+    const config = vscode.workspace.getConfiguration('revealjsLivePreview')
+    const selectedTheme = config.get('theme', 'white')
+    const dataSeparator = config.get('dataSeparator', '\r?\n---\r?\n')
+    const dataSeparatorVertical = config.get('dataSeparatorVertical', '\r?\n--\r?\n')
+
+    // Reveal.js configs
+    const revealConfig = {
+        controls: config.get('revealjsLivePreview.controls', true),
+        controlsTutorial: config.get('revealjsLivePreview.controlsTutorial', true),
+        controlsLayout: config.get('revealjsLivePreview.controlsLayout', 'bottom-right'),
+        controlsBackArrows: config.get('revealjsLivePreview.controlsBackArrows', 'faded'),
+        progress: config.get('revealjsLivePreview.progress', true),
+        slideNumber: config.get('revealjsLivePreview.slideNumber', false),
+        showSlideNumber: config.get('revealjsLivePreview.showSlideNumber', 'all'),
+        hashOneBasedIndex: config.get('revealjsLivePreview.hashOneBasedIndex', false),
+        hash: config.get('revealjsLivePreview.hash', false),
+        respondToHashChanges: config.get('revealjsLivePreview.respondToHashChanges', true),
+        transition: config.get('revealjsLivePreview.transition', 'slide'),
+        transitionSpeed: config.get('revealjsLivePreview.transitionSpeed', 'default'),
+        backgroundTransition: config.get('revealjsLivePreview.backgroundTransition', 'fade'),
+        autoSlide: config.get('revealjsLivePreview.autoSlide', 0),
+        autoSlideStoppable: config.get('revealjsLivePreview.autoSlideStoppable', true),
+        mouseWheel: config.get('revealjsLivePreview.mouseWheel', false),
+        pdfSeparateFragments: config.get('revealjsLivePreview.pdfSeparateFragments', true),
+        hideInactiveCursor: config.get('revealjsLivePreview.hideInactiveCursor', true),
+        hideCursorTime: config.get('revealjsLivePreview.hideCursorTime', 5000)
+    }
+    const revealConfigString = JSON.stringify(revealConfig)
+
+    panel.webview.html = getWebviewContent(
+        markdownContent,
+        panel.webview,
+        context,
+        selectedTheme,
+        dataSeparator,
+        dataSeparatorVertical,
+        revealConfigString
+    )
+}
+
+// Activates the extension
 function activate(context) {
     const disposable = vscode.commands.registerCommand('revealjsLivePreview.start', function () {
         const editor = vscode.window.activeTextEditor
@@ -26,59 +69,16 @@ function activate(context) {
             }
         )
 
-        function updatePreview() {
-            const markdownContent = fs.readFileSync(filePath, 'utf8')
-
-            // Get user settings
-            const config = vscode.workspace.getConfiguration('revealjsLivePreview')
-            const selectedTheme = config.get('theme', 'white')
-            const dataSeparator = config.get('dataSeparator', '\r?\n---\r?\n')
-            const dataSeparatorVertical = config.get('dataSeparatorVertical', '\r?\n--\r?\n')
-
-            // Reveal.js configs
-            const revealConfig = {
-                controls: config.get('revealjsLivePreview.controls', true),
-                controlsTutorial: config.get('revealjsLivePreview.controlsTutorial', true),
-                controlsLayout: config.get('revealjsLivePreview.controlsLayout', 'bottom-right'),
-                controlsBackArrows: config.get('revealjsLivePreview.controlsBackArrows', 'faded'),
-                progress: config.get('revealjsLivePreview.progress', true),
-                slideNumber: config.get('revealjsLivePreview.slideNumber', false),
-                showSlideNumber: config.get('revealjsLivePreview.showSlideNumber', 'all'),
-                hashOneBasedIndex: config.get('revealjsLivePreview.hashOneBasedIndex', false),
-                hash: config.get('revealjsLivePreview.hash', false),
-                respondToHashChanges: config.get('revealjsLivePreview.respondToHashChanges', true),
-                transition: config.get('revealjsLivePreview.transition', 'slide'),
-                transitionSpeed: config.get('revealjsLivePreview.transitionSpeed', 'default'),
-                backgroundTransition: config.get('revealjsLivePreview.backgroundTransition', 'fade'),
-                autoSlide: config.get('revealjsLivePreview.autoSlide', 0),
-                autoSlideStoppable: config.get('revealjsLivePreview.autoSlideStoppable', true),
-                mouseWheel: config.get('revealjsLivePreview.mouseWheel', false),
-                pdfSeparateFragments: config.get('revealjsLivePreview.pdfSeparateFragments', true),
-                hideInactiveCursor: config.get('revealjsLivePreview.hideInactiveCursor', true),
-                hideCursorTime: config.get('revealjsLivePreview.hideCursorTime', 5000)
-            }
-
-            const revealConfigString = JSON.stringify(revealConfig)
-
-            panel.webview.html = getWebviewContent(
-                markdownContent,
-                panel.webview,
-                context,
-                selectedTheme,
-                dataSeparator,
-                dataSeparatorVertical,
-                revealConfigString
-            )
-        }
-
-        updatePreview()
+        updatePreview(filePath, context, panel)
 
         // Watch file for changes
-        fs.watch(filePath, { encoding: 'utf8' }, updatePreview)
+        fs.watch(filePath, { encoding: 'utf8' }, () => {
+            updatePreview(filePath, context, panel)
+        })
 
         vscode.workspace.onDidChangeTextDocument((event) => {
             if (event.document.fileName === filePath) {
-                updatePreview()
+                updatePreview(filePath, context, panel)
             }
         })
     })
@@ -86,11 +86,7 @@ function activate(context) {
     context.subscriptions.push(disposable)
 }
 
-/**
- * Generates HTML for the Reveal.js preview.
- * @param {string} markdownContent
- * @returns {string} HTML string
- */
+// Generates HTML for preview
 function getWebviewContent(
     markdownContent,
     webview,
@@ -103,16 +99,12 @@ function getWebviewContent(
     const revealBasePath = vscode.Uri.file(
         path.join(context.extensionPath, 'node_modules', 'reveal.js')
     )
-
     const revealCss = webview.asWebviewUri(
         vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.css'))
     )
-
-    // Use the user-selected theme dynamically
     const themeCss = webview.asWebviewUri(
         vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'theme', `${theme}.css`))
     )
-
     const revealJs = webview.asWebviewUri(
         vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.js'))
     )
@@ -121,6 +113,9 @@ function getWebviewContent(
     )
     const highlightPlugin = webview.asWebviewUri(
         vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'highlight', 'highlight.js'))
+    )
+    const notesPlugin = webview.asWebviewUri(
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'notes', 'notes.js'))
     )
 
     return `<!DOCTYPE html>
@@ -144,17 +139,16 @@ function getWebviewContent(
   <script src="${revealJs}"></script>
   <script src="${markdownPlugin}"></script>
   <script src="${highlightPlugin}"></script>
+  <script src="${notesPlugin}"></script>
   <script>
     const config = ${revealConfigString}
     Reveal.initialize({
         ...config,
-      plugins: [ RevealMarkdown, RevealHighlight ]
+      plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
     });
   </script>
 </body>
 </html>`
 }
 
-function deactivate() {}
-
-module.exports = { activate, deactivate }
+module.exports = { activate }
