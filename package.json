@@ -53,6 +53,108 @@
           "type": "string",
           "default": "\r?\n--\r?\n",
           "description": "Regular expression for vertical slide separation."
+        },
+        "revealjsLivePreview.controls": {
+          "type": "boolean",
+          "default": true,
+          "description": "Display presentation control arrows"
+        },
+        "revealjsLivePreview.controlsTutorial": {
+          "type": "boolean",
+          "default": true,
+          "description": "Help the user learn the controls by providing hints"
+        },
+        "revealjsLivePreview.controlsLayout": {
+          "type": "string",
+          "default": "bottom-right",
+          "enum": ["edges", "bottom-right"],
+          "description": "Determines where controls appear"
+        },
+        "revealjsLivePreview.controlsBackArrows": {
+          "type": "string",
+          "default": "faded",
+          "enum": ["faded", "hidden", "visible"],
+          "description": "Visibility rule for backwards navigation arrows"
+        },
+        "revealjsLivePreview.progress": {
+          "type": "boolean",
+          "default": true,
+          "description": "Display a presentation progress bar"
+        },
+        "revealjsLivePreview.slideNumber": {
+          "type": ["boolean", "string"],
+          "default": false,
+          "enum": [false, "h.v", "h/v", "c", "c/t"],
+          "description": "Display the page number of the current slide"
+        },
+        "revealjsLivePreview.showSlideNumber": {
+          "type": "string",
+          "default": "all",
+          "enum": ["all", "print", "speaker"],
+          "description": "Contexts where the slide number appears"
+        },
+        "revealjsLivePreview.hashOneBasedIndex": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use 1 based indexing for slide links"
+        },
+        "revealjsLivePreview.hash": {
+          "type": "boolean",
+          "default": false,
+          "description": "Add current slide number to the URL hash"
+        },
+        "revealjsLivePreview.respondToHashChanges": {
+          "type": "boolean",
+          "default": true,
+          "description": "Monitor the hash and change slides accordingly"
+        },
+        "revealjsLivePreview.transition": {
+          "type": "string",
+          "default": "slide",
+          "enum": ["none", "fade", "slide", "convex", "concave", "zoom"],
+          "description": "Transition style"
+        },
+        "revealjsLivePreview.transitionSpeed": {
+          "type": "string",
+          "default": "default",
+          "enum": ["default", "fast", "slow"],
+          "description": "Transition speed"
+        },
+        "revealjsLivePreview.backgroundTransition": {
+          "type": "string",
+          "default": "fade",
+          "enum": ["none", "fade", "slide", "convex", "concave", "zoom"],
+          "description": "Background transition style"
+        },
+        "revealjsLivePreview.autoSlide": {
+          "type": "number",
+          "default": 0,
+          "description": "Automatic slide transition time in ms"
+        },
+        "revealjsLivePreview.autoSlideStoppable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Stop auto-sliding after user input"
+        },
+        "revealjsLivePreview.mouseWheel": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable slide navigation via mouse wheel"
+        },
+        "revealjsLivePreview.pdfSeparateFragments": {
+          "type": "boolean",
+          "default": true,
+          "description": "Print each fragment on a separate slide"
+        },
+        "revealjsLivePreview.hideInactiveCursor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide cursor if inactive"
+        },
+        "revealjsLivePreview.hideCursorTime": {
+          "type": "number",
+          "default": 5000,
+          "description": "Time before the cursor is hidden (in ms)"
         }
       }
     }

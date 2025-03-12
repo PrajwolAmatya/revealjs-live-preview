@@ -35,7 +35,40 @@ function activate(context) {
             const dataSeparator = config.get('dataSeparator', '\r?\n---\r?\n')
             const dataSeparatorVertical = config.get('dataSeparatorVertical', '\r?\n--\r?\n')
 
-            panel.webview.html = getWebviewContent(markdownContent, panel.webview, context, selectedTheme, dataSeparator, dataSeparatorVertical)
+            // Reveal.js configs
+            const revealConfig = {
+                controls: config.get('revealjsLivePreview.controls', true),
+                controlsTutorial: config.get('revealjsLivePreview.controlsTutorial', true),
+                controlsLayout: config.get('revealjsLivePreview.controlsLayout', 'bottom-right'),
+                controlsBackArrows: config.get('revealjsLivePreview.controlsBackArrows', 'faded'),
+                progress: config.get('revealjsLivePreview.progress', true),
+                slideNumber: config.get('revealjsLivePreview.slideNumber', false),
+                showSlideNumber: config.get('revealjsLivePreview.showSlideNumber', 'all'),
+                hashOneBasedIndex: config.get('revealjsLivePreview.hashOneBasedIndex', false),
+                hash: config.get('revealjsLivePreview.hash', false),
+                respondToHashChanges: config.get('revealjsLivePreview.respondToHashChanges', true),
+                transition: config.get('revealjsLivePreview.transition', 'slide'),
+                transitionSpeed: config.get('revealjsLivePreview.transitionSpeed', 'default'),
+                backgroundTransition: config.get('revealjsLivePreview.backgroundTransition', 'fade'),
+                autoSlide: config.get('revealjsLivePreview.autoSlide', 0),
+                autoSlideStoppable: config.get('revealjsLivePreview.autoSlideStoppable', true),
+                mouseWheel: config.get('revealjsLivePreview.mouseWheel', false),
+                pdfSeparateFragments: config.get('revealjsLivePreview.pdfSeparateFragments', true),
+                hideInactiveCursor: config.get('revealjsLivePreview.hideInactiveCursor', true),
+                hideCursorTime: config.get('revealjsLivePreview.hideCursorTime', 5000)
+            }
+
+            const revealConfigString = JSON.stringify(revealConfig)
+
+            panel.webview.html = getWebviewContent(
+                markdownContent,
+                panel.webview,
+                context,
+                selectedTheme,
+                dataSeparator,
+                dataSeparatorVertical,
+                revealConfigString
+            )
         }
 
         updatePreview()
@@ -58,7 +91,15 @@ function activate(context) {
  * @param {string} markdownContent
  * @returns {string} HTML string
  */
-function getWebviewContent(markdownContent, webview, context, theme, dataSeparator, dataSeparatorVertical) {
+function getWebviewContent(
+    markdownContent,
+    webview,
+    context,
+    theme,
+    dataSeparator,
+    dataSeparatorVertical,
+    revealConfigString
+) {
     const revealBasePath = vscode.Uri.file(
         path.join(context.extensionPath, 'node_modules', 'reveal.js')
     )
@@ -104,7 +145,9 @@ function getWebviewContent(markdownContent, webview, context, theme, dataSeparat
   <script src="${markdownPlugin}"></script>
   <script src="${highlightPlugin}"></script>
   <script>
+    const config = ${revealConfigString}
     Reveal.initialize({
+        ...config,
       plugins: [ RevealMarkdown, RevealHighlight ]
     });
   </script>
