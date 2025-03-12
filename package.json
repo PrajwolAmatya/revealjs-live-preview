@@ -43,6 +43,16 @@
             "solarized"
           ],
           "description": "Select the theme for Reveal.js slides."
+        },
+        "revealjsLivePreview.dataSeparator": {
+          "type": "string",
+          "default": "\r?\n---\r?\n",
+          "description": "Regular expression for horizontal slide separation."
+        },
+        "revealjsLivePreview.dataSeparatorVertical": {
+          "type": "string",
+          "default": "\r?\n--\r?\n",
+          "description": "Regular expression for vertical slide separation."
         }
       }
     }

@@ -29,11 +29,13 @@ function activate(context) {
         function updatePreview() {
             const markdownContent = fs.readFileSync(filePath, 'utf8')
 
-            // Read user-selected theme from settings
+            // Get user settings
             const config = vscode.workspace.getConfiguration('revealjsLivePreview')
             const selectedTheme = config.get('theme', 'white')
+            const dataSeparator = config.get('dataSeparator', '\r?\n---\r?\n')
+            const dataSeparatorVertical = config.get('dataSeparatorVertical', '\r?\n--\r?\n')
 
-            panel.webview.html = getWebviewContent(markdownContent, panel.webview, context, selectedTheme)
+            panel.webview.html = getWebviewContent(markdownContent, panel.webview, context, selectedTheme, dataSeparator, dataSeparatorVertical)
         }
 
         updatePreview()
@@ -56,7 +58,7 @@ function activate(context) {
  * @param {string} markdownContent
  * @returns {string} HTML string
  */
-function getWebviewContent(markdownContent, webview, context, theme) {
+function getWebviewContent(markdownContent, webview, context, theme, dataSeparator, dataSeparatorVertical) {
     const revealBasePath = vscode.Uri.file(
         path.join(context.extensionPath, 'node_modules', 'reveal.js')
     )
@@ -91,7 +93,9 @@ function getWebviewContent(markdownContent, webview, context, theme) {
 <body>
   <div class="reveal">
     <div class="slides">
-      <section data-markdown>
+      <section data-markdown 
+        data-separator="${dataSeparator}"
+        data-separator-vertical="${dataSeparatorVertical}">
         <textarea data-template>${markdownContent}</textarea>
       </section>
     </div>
