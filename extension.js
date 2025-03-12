@@ -15,25 +15,25 @@ function updatePreview(filePath, context, panel) {
 
     // Reveal.js configs
     const revealConfig = {
-        controls: config.get('revealjsLivePreview.controls', true),
-        controlsTutorial: config.get('revealjsLivePreview.controlsTutorial', true),
-        controlsLayout: config.get('revealjsLivePreview.controlsLayout', 'bottom-right'),
-        controlsBackArrows: config.get('revealjsLivePreview.controlsBackArrows', 'faded'),
-        progress: config.get('revealjsLivePreview.progress', true),
-        slideNumber: config.get('revealjsLivePreview.slideNumber', false),
-        showSlideNumber: config.get('revealjsLivePreview.showSlideNumber', 'all'),
-        hashOneBasedIndex: config.get('revealjsLivePreview.hashOneBasedIndex', false),
-        hash: config.get('revealjsLivePreview.hash', false),
-        respondToHashChanges: config.get('revealjsLivePreview.respondToHashChanges', true),
-        transition: config.get('revealjsLivePreview.transition', 'slide'),
-        transitionSpeed: config.get('revealjsLivePreview.transitionSpeed', 'default'),
-        backgroundTransition: config.get('revealjsLivePreview.backgroundTransition', 'fade'),
-        autoSlide: config.get('revealjsLivePreview.autoSlide', 0),
-        autoSlideStoppable: config.get('revealjsLivePreview.autoSlideStoppable', true),
-        mouseWheel: config.get('revealjsLivePreview.mouseWheel', false),
-        pdfSeparateFragments: config.get('revealjsLivePreview.pdfSeparateFragments', true),
-        hideInactiveCursor: config.get('revealjsLivePreview.hideInactiveCursor', true),
-        hideCursorTime: config.get('revealjsLivePreview.hideCursorTime', 5000)
+        controls: config.get('controls', true),
+        controlsTutorial: config.get('controlsTutorial', true),
+        controlsLayout: config.get('controlsLayout', 'bottom-right'),
+        controlsBackArrows: config.get('controlsBackArrows', 'faded'),
+        progress: config.get('progress', true),
+        slideNumber: config.get('slideNumber', false),
+        showSlideNumber: config.get('showSlideNumber', 'all'),
+        hashOneBasedIndex: config.get('hashOneBasedIndex', false),
+        hash: config.get('hash', false),
+        respondToHashChanges: config.get('respondToHashChanges', true),
+        transition: config.get('transition', 'slide'),
+        transitionSpeed: config.get('transitionSpeed', 'default'),
+        backgroundTransition: config.get('backgroundTransition', 'fade'),
+        autoSlide: config.get('autoSlide', 0),
+        autoSlideStoppable: config.get('autoSlideStoppable', true),
+        mouseWheel: config.get('mouseWheel', false),
+        pdfSeparateFragments: config.get('pdfSeparateFragments', true),
+        hideInactiveCursor: config.get('hideInactiveCursor', true),
+        hideCursorTime: config.get('hideCursorTime', 5000)
     }
     const revealConfigString = JSON.stringify(revealConfig)
 
