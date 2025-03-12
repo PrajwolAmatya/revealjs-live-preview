@@ -5,6 +5,7 @@ const fs = require('fs')
 // Updates the preview with latest changes
 function updatePreview(filePath, context, panel) {
     const markdownContent = fs.readFileSync(filePath, 'utf8')
+    const fileName = path.basename(filePath, path.extname(filePath))
 
     // Get user settings
     const config = vscode.workspace.getConfiguration('revealjsLivePreview')
@@ -36,7 +37,9 @@ function updatePreview(filePath, context, panel) {
     }
     const revealConfigString = JSON.stringify(revealConfig)
 
+    panel.title = fileName
     panel.webview.html = getWebviewContent(
+        fileName,
         markdownContent,
         panel.webview,
         context,
@@ -88,6 +91,7 @@ function activate(context) {
 
 // Generates HTML for preview
 function getWebviewContent(
+    fileName,
     markdownContent,
     webview,
     context,
@@ -122,7 +126,7 @@ function getWebviewContent(
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Reveal.js Preview</title>
+  <title>${fileName}</title>
   <link rel="stylesheet" href="${revealCss}">
   <link rel="stylesheet" href="${themeCss}">
 </head>
