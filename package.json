@@ -32,16 +32,7 @@
         "revealjsLivePreview.theme": {
           "type": "string",
           "default": "white",
-          "enum": [
-            "black",
-            "white",
-            "league",
-            "moon",
-            "night",
-            "serif",
-            "simple",
-            "solarized"
-          ],
+          "enum": ["black", "white", "league", "moon", "night", "serif", "simple", "solarized"],
           "description": "Select the theme for Reveal.js slides."
         },
         "revealjsLivePreview.dataSeparator": {
