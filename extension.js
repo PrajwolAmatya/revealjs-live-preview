@@ -109,6 +109,12 @@ function getWebviewContent(
     const themeCss = webview.asWebviewUri(
         vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'theme', `${theme}.css`))
     )
+    const highlightThemeCss = webview.asWebviewUri(
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'highlight', 'monokai.css'))
+    )
+    const resetCss = webview.asWebviewUri(
+        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reset.css'))
+    )
     const revealJs = webview.asWebviewUri(
         vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.js'))
     )
@@ -128,7 +134,9 @@ function getWebviewContent(
   <meta charset="utf-8">
   <title>${fileName}</title>
   <link rel="stylesheet" href="${revealCss}">
+  <link rel="stylesheet" href="${resetCss}">
   <link rel="stylesheet" href="${themeCss}">
+  <link rel="stylesheet" href="${highlightThemeCss}">
 </head>
 <body>
   <div class="reveal">
