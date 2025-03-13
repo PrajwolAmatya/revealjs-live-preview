@@ -6,7 +6,7 @@
   "publisher": "Prajwol Amatya",
   "type": "commonjs",
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": ">=1.80.0"
   },
   "categories": [
     "Other"
