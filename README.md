@@ -1,16 +1,34 @@
 # Reveal.js Live Preview Extension
 
-This VSCode extension allows you to preview Reveal.js slides from a Markdown file.
+This VSCode extension allows you to preview Reveal.js slides from a Markdown file. It enables users to see slide updates in real time within VS Code as they edit Markdown files.
 
 ## Features
-- Live preview of Reveal.js slides.
-- Auto-refresh when you edit the Markdown file.
+- **Live Preview:** Instantly renders Markdown slides with Reveal.js in a webview.
+- **Theme selection:** Supports different Reveal.js theme
+- **Automatic updates:** Detects and reloads changes to Markdown file.
+- **Custom Reveal.js settings:** Configurable through VS Code settings.
 
-## Installation
-1. Clone this repository.
-2. Run `npm install`.
-3. Open the folder in VSCode and press `F5` to launch the extension.
+## Using the Extension
+Search `Reveal.js Live Preview` in the VS Code Extension Marketplace and install it. Once you have installed the **Reveal.js Live Preview** extension in VS Code, follow these steps to preview your slides:
 
-## Usage
-1. Open a Markdown file with Reveal.js syntax.
-2. Run `Reveal.js Live Preview` from the command palette (`Ctrl+Shift+P`).
+### Step 1: Open your markdown file
+- Open VS Code
+- Open the `.md` file containing your Reveal.js slide.
+
+### Step 2: Start the Reveal.js Live Preview
+Use any of the following methods to start the preview.
+
+#### Option 1: Use Command Palette
+1. Press `Ctrl + Shift + P`.
+2. Type `Revesl.js Live Preview: Start`
+3. Select the command and press **Enter**
+
+#### Option 2: Use Keyboard Shortcut
+- Press `Ctrl + Alt + R`
+
+## Customizing Reveal.js Settings
+You can customize the **Reveal.js settings** (like themes, transistiions, slide separators, etc.) using the VS Code settings.
+
+1. Open VS Code Settings `Ctrl + ,`.
+2. Search for `Reveal.js Live Preview`.
+3. All settings will be available and settings can be updated.
