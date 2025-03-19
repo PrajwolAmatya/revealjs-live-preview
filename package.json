@@ -37,12 +37,12 @@
         },
         "revealjsLivePreview.dataSeparator": {
           "type": "string",
-          "default": "\r?\n---\r?\n",
+          "default": "\\r?\\n---\\r?\\n",
           "description": "Regular expression for horizontal slide separation."
         },
         "revealjsLivePreview.dataSeparatorVertical": {
           "type": "string",
-          "default": "\r?\n--\r?\n",
+          "default": "\\r?\\n--\\r?\\n",
           "description": "Regular expression for vertical slide separation."
         },
         "revealjsLivePreview.controls": {
