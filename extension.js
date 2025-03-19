@@ -2,6 +2,18 @@ const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
 
+function isValidRegex(str) {
+    if (typeof str !== 'string' || str.trim() === '') {
+        return false
+    }
+    try {
+        new RegExp(str)
+        return true
+    } catch {
+        return false
+    }
+}
+
 // Updates the preview with latest changes
 function updatePreview(filePath, context, panel) {
     const markdownContent = fs.readFileSync(filePath, 'utf8')
@@ -10,9 +22,17 @@ function updatePreview(filePath, context, panel) {
     // Get user settings
     const config = vscode.workspace.getConfiguration('revealjsLivePreview')
     const selectedTheme = config.get('theme', 'white')
-    const dataSeparator = config.get('dataSeparator', '\\r?\\n---\\r?\\n')
-    const dataSeparatorVertical = config.get('dataSeparatorVertical', '\\r?\\n--\\r?\\n')
-
+    let dataSeparator = config.get('dataSeparator', '\\r?\\n---\\r?\\n')
+    if (!isValidRegex(dataSeparator)) {
+        vscode.window.showErrorMessage(`Invalid regex ${dataSeparator} for horizontal slide separator. Using default: \\r?\\n---\\r?\\n`)
+        dataSeparator = '\\r?\\n---\\r?\\n'
+    }
+    
+    let dataSeparatorVertical = config.get('dataSeparatorVertical', '\\r?\\n--\\r?\\n')
+    if (!isValidRegex(dataSeparatorVertical)) {
+        vscode.window.showErrorMessage(`Invalid regex ${dataSeparatorVertical} for vertical slide separator. Using default: \\r?\\n--\\r?\\n`)
+        dataSeparatorVertical = '\\r?\\n--\\r?\\n'
+    }
     // Reveal.js configs
     const revealConfig = {
         controls: config.get('controls', true),
