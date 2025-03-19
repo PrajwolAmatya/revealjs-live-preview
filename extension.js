@@ -10,8 +10,8 @@ function updatePreview(filePath, context, panel) {
     // Get user settings
     const config = vscode.workspace.getConfiguration('revealjsLivePreview')
     const selectedTheme = config.get('theme', 'white')
-    const dataSeparator = config.get('dataSeparator', '\r?\n---\r?\n')
-    const dataSeparatorVertical = config.get('dataSeparatorVertical', '\r?\n--\r?\n')
+    const dataSeparator = config.get('dataSeparator', '\\r?\\n---\\r?\\n')
+    const dataSeparatorVertical = config.get('dataSeparatorVertical', '\\r?\\n--\\r?\\n')
 
     // Reveal.js configs
     const revealConfig = {
