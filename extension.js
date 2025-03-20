@@ -85,10 +85,7 @@ function activate(context) {
             'Reveal.js Preview',
             vscode.ViewColumn.Two,
             { 
-                enableScripts: true,
-                localResourceRoots: [
-                    vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js'))
-                ]
+                enableScripts: true
             }
         )
 

@@ -15,7 +15,15 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "reveal",
+    "reveal.js",
+    "revealjs live preview"
+  ],
   "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:revealjsLivePreview.start"
+  ],
   "contributes": {
     "commands": [
       {
@@ -36,7 +44,16 @@
         "revealjsLivePreview.theme": {
           "type": "string",
           "default": "white",
-          "enum": ["black", "white", "league", "moon", "night", "serif", "simple", "solarized"],
+          "enum": [
+            "black",
+            "white",
+            "league",
+            "moon",
+            "night",
+            "serif",
+            "simple",
+            "solarized"
+          ],
           "description": "Select the theme for Reveal.js slides."
         },
         "revealjsLivePreview.dataSeparator": {
@@ -62,13 +79,20 @@
         "revealjsLivePreview.controlsLayout": {
           "type": "string",
           "default": "bottom-right",
-          "enum": ["edges", "bottom-right"],
+          "enum": [
+            "edges",
+            "bottom-right"
+          ],
           "description": "Determines where controls appear"
         },
         "revealjsLivePreview.controlsBackArrows": {
           "type": "string",
           "default": "faded",
-          "enum": ["faded", "hidden", "visible"],
+          "enum": [
+            "faded",
+            "hidden",
+            "visible"
+          ],
           "description": "Visibility rule for backwards navigation arrows"
         },
         "revealjsLivePreview.progress": {
@@ -77,15 +101,28 @@
           "description": "Display a presentation progress bar"
         },
         "revealjsLivePreview.slideNumber": {
-          "type": ["boolean", "string"],
+          "type": [
+            "boolean",
+            "string"
+          ],
           "default": false,
-          "enum": [false, "h.v", "h/v", "c", "c/t"],
+          "enum": [
+            false,
+            "h.v",
+            "h/v",
+            "c",
+            "c/t"
+          ],
           "description": "Display the page number of the current slide"
         },
         "revealjsLivePreview.showSlideNumber": {
           "type": "string",
           "default": "all",
-          "enum": ["all", "print", "speaker"],
+          "enum": [
+            "all",
+            "print",
+            "speaker"
+          ],
           "description": "Contexts where the slide number appears"
         },
         "revealjsLivePreview.hashOneBasedIndex": {
@@ -106,19 +143,37 @@
         "revealjsLivePreview.transition": {
           "type": "string",
           "default": "slide",
-          "enum": ["none", "fade", "slide", "convex", "concave", "zoom"],
+          "enum": [
+            "none",
+            "fade",
+            "slide",
+            "convex",
+            "concave",
+            "zoom"
+          ],
           "description": "Transition style"
         },
         "revealjsLivePreview.transitionSpeed": {
           "type": "string",
           "default": "default",
-          "enum": ["default", "fast", "slow"],
+          "enum": [
+            "default",
+            "fast",
+            "slow"
+          ],
           "description": "Transition speed"
         },
         "revealjsLivePreview.backgroundTransition": {
           "type": "string",
           "default": "fade",
-          "enum": ["none", "fade", "slide", "convex", "concave", "zoom"],
+          "enum": [
+            "none",
+            "fade",
+            "slide",
+            "convex",
+            "concave",
+            "zoom"
+          ],
           "description": "Background transition style"
         },
         "revealjsLivePreview.autoSlide": {
@@ -156,13 +211,23 @@
   },
   "scripts": {
     "lint": "eslint --config eslint.config.js",
-    "lint:fix": "eslint --config eslint.config.js --fix"
+    "lint:fix": "eslint --config eslint.config.js --fix",
+    "build": "webpack -d eval",
+    "build:w": "webpack -d eval -w",
+    "package": "vsce package",
+    "deploy": "vsce publish"
   },
   "dependencies": {
     "reveal.js": "^5.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
+    "babel-loader": "^10.0.0",
     "eslint": "^9.21.0",
-    "vscode": "^1.1.37"
+    "vsce": "^2.15.0",
+    "vscode": "^1.1.37",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
   }
 }
