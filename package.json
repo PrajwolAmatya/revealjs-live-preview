@@ -4,6 +4,10 @@
   "description": "Live preview of Reveal.js slides inside VSCode",
   "version": "1.0.0",
   "publisher": "prajwolamatya",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PrajwolAmatya/revealjs-live-preview"
+  },
   "type": "commonjs",
   "engines": {
     "vscode": ">=1.80.0"
