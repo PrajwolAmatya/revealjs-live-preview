@@ -158,9 +158,11 @@
     "lint": "eslint --config eslint.config.js",
     "lint:fix": "eslint --config eslint.config.js --fix"
   },
+  "dependencies": {
+    "reveal.js": "^5.1.0"
+  },
   "devDependencies": {
     "eslint": "^9.21.0",
-    "reveal.js": "^5.1.0",
     "vscode": "^1.1.37"
   }
 }
