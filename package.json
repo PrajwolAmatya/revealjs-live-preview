@@ -3,7 +3,7 @@
   "displayName": "Reveal.js Live Preview",
   "description": "Live preview of Reveal.js slides inside VSCode",
   "version": "1.0.0",
-  "publisher": "Prajwol Amatya",
+  "publisher": "prajwolamatya",
   "type": "commonjs",
   "engines": {
     "vscode": ">=1.80.0"
