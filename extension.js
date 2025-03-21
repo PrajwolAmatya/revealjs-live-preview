@@ -139,7 +139,6 @@ function getWebviewContent(
     const markdownPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'markdown', 'markdown.js')).toString()
     const highlightPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'highlight.js')).toString()
     const notesPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'notes', 'notes.js')).toString()
-    console.log('Reveal.js Webview URI: ', revealJs)
 
     return `<!DOCTYPE html>
 <html>
