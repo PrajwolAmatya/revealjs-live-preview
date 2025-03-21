@@ -25,6 +25,11 @@
     "onCommand:revealjsLivePreview.start"
   ],
   "contributes": {
+    "assets": [
+      {
+        "path": "./media/reveal.js"
+      }
+    ],
     "commands": [
       {
         "command": "revealjsLivePreview.start",
@@ -212,7 +217,8 @@
   "scripts": {
     "lint": "eslint --config eslint.config.js",
     "lint:fix": "eslint --config eslint.config.js --fix",
-    "build": "webpack -d eval",
+    "copy-assets": "mkdir -p media/reveal.js && cp -r node_modules/reveal.js/dist media/reveal.js/ && cp -r node_modules/reveal.js/plugin media/reveal.js/",
+    "build": "npm run copy-assets && webpack -d eval",
     "build:w": "webpack -d eval -w",
     "package": "vsce package",
     "deploy": "vsce publish"
