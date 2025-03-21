@@ -6,4 +6,3 @@ node_modules/
 packages
 *.lock
 .idea
-media

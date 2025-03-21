@@ -20,7 +20,7 @@
     "reveal.js",
     "revealjs live preview"
   ],
-  "main": "./extension.js",
+  "main": "./dist/extension.js",
   "activationEvents": [
     "onCommand:revealjsLivePreview.start"
   ],
@@ -223,14 +223,12 @@
     "package": "vsce package",
     "deploy": "vsce publish"
   },
-  "dependencies": {
-    "reveal.js": "^5.1.0"
-  },
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "babel-loader": "^10.0.0",
     "eslint": "^9.21.0",
+    "reveal.js": "^5.2.0",
     "vsce": "^2.15.0",
     "vscode": "^1.1.37",
     "webpack": "^5.98.0",
