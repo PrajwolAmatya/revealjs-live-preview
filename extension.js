@@ -27,12 +27,13 @@ function updatePreview(filePath, context, panel) {
         vscode.window.showErrorMessage(`Invalid regex ${dataSeparator} for horizontal slide separator. Using default: \\r?\\n---\\r?\\n`)
         dataSeparator = '\\r?\\n---\\r?\\n'
     }
-    
+
     let dataSeparatorVertical = config.get('dataSeparatorVertical', '\\r?\\n--\\r?\\n')
     if (!isValidRegex(dataSeparatorVertical)) {
         vscode.window.showErrorMessage(`Invalid regex ${dataSeparatorVertical} for vertical slide separator. Using default: \\r?\\n--\\r?\\n`)
         dataSeparatorVertical = '\\r?\\n--\\r?\\n'
     }
+  
     // Reveal.js configs
     const revealConfig = {
         controls: config.get('controls', true),
@@ -84,16 +85,28 @@ function activate(context) {
             'revealjsPreview',
             'Reveal.js Preview',
             vscode.ViewColumn.Two,
-            { 
-                enableScripts: true
+            {
+                enableScripts: true,
+                localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
             }
         )
 
         updatePreview(filePath, context, panel)
 
-        // Watch file for changes
-        fs.watch(filePath, { encoding: 'utf8' }, () => {
-            updatePreview(filePath, context, panel)
+        let watcher = null
+        try {
+            watcher = fs.watch(filePath, { encoding: 'utf8' }, () => {
+                updatePreview(filePath, context, panel)
+            })
+        } catch (error) {
+            console.error(`Error watching file: ${error}`)
+        }
+
+        // Clean up watcher when panel is closed
+        panel.onDidDispose(() => {
+            if (watcher) {
+                watcher.close()
+            }
         })
 
         vscode.workspace.onDidChangeTextDocument((event) => {
@@ -117,33 +130,15 @@ function getWebviewContent(
     dataSeparatorVertical,
     revealConfigString
 ) {
-    const revealBasePath = vscode.Uri.file(
-        path.join(context.extensionPath, 'media', 'reveal.js')
-    )
-    const revealCss = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.css'))
-    )
-    const themeCss = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'theme', `${theme}.css`))
-    )
-    const highlightThemeCss = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'highlight', 'monokai.css'))
-    )
-    const resetCss = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reset.css'))
-    )
-    const revealJs = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.js'))
-    )
-    const markdownPlugin = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'markdown', 'markdown.js'))
-    )
-    const highlightPlugin = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'highlight', 'highlight.js'))
-    )
-    const notesPlugin = webview.asWebviewUri(
-        vscode.Uri.file(path.join(revealBasePath.fsPath, 'plugin', 'notes', 'notes.js'))
-    )
+    const revealBasePath = vscode.Uri.joinPath(context.extensionUri, 'media', 'reveal.js')
+    const revealCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.css'))
+    const themeCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'theme', `${theme}.css`))
+    const highlightThemeCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'monokai.css'))
+    const resetCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reset.css'))
+    const revealJs = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.js'))
+    const markdownPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'markdown', 'markdown.js'))
+    const highlightPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'highlight.js'))
+    const notesPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'notes', 'notes.js'))
 
     return `<!DOCTYPE html>
 <html>
@@ -170,9 +165,9 @@ function getWebviewContent(
   <script src="${highlightPlugin}"></script>
   <script src="${notesPlugin}"></script>
   <script>
-    const config = ${revealConfigString}
+    const config = ${revealConfigString};
     Reveal.initialize({
-        ...config,
+      ...config,
       plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
     });
   </script>
