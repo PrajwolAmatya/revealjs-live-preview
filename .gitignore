@@ -2,7 +2,8 @@
 node_modules/
 *.vsix
 *.log
-**/dist
+dist
 packages
 *.lock
 .idea
+!media/reveal.js/dist
