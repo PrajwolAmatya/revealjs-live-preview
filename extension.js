@@ -131,14 +131,15 @@ function getWebviewContent(
     revealConfigString
 ) {
     const revealBasePath = vscode.Uri.joinPath(context.extensionUri, 'media', 'reveal.js')
-    const revealCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.css'))
-    const themeCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'theme', `${theme}.css`))
-    const highlightThemeCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'monokai.css'))
-    const resetCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reset.css'))
-    const revealJs = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.js'))
-    const markdownPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'markdown', 'markdown.js'))
-    const highlightPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'highlight.js'))
-    const notesPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'notes', 'notes.js'))
+    const revealCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.css')).toString()
+    const themeCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'theme', `${theme}.css`)).toString()
+    const highlightThemeCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'monokai.css')).toString()
+    const resetCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reset.css')).toString()
+    const revealJs = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.js')).toString()
+    const markdownPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'markdown', 'markdown.js')).toString()
+    const highlightPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'highlight.js')).toString()
+    const notesPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'notes', 'notes.js')).toString()
+    console.log('Reveal.js Webview URI: ', revealJs)
 
     return `<!DOCTYPE html>
 <html>
