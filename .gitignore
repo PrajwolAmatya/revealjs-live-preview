@@ -1,2 +1,9 @@
 .vscode/
 node_modules/
+*.vsix
+*.log
+**/dist
+packages
+*.lock
+.idea
+media

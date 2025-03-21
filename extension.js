@@ -85,10 +85,7 @@ function activate(context) {
             'Reveal.js Preview',
             vscode.ViewColumn.Two,
             { 
-                enableScripts: true,
-                localResourceRoots: [
-                    vscode.Uri.file(path.join(context.extensionPath, 'node_modules', 'reveal.js'))
-                ]
+                enableScripts: true
             }
         )
 
@@ -121,7 +118,7 @@ function getWebviewContent(
     revealConfigString
 ) {
     const revealBasePath = vscode.Uri.file(
-        path.join(context.extensionPath, 'node_modules', 'reveal.js')
+        path.join(context.extensionPath, 'media', 'reveal.js')
     )
     const revealCss = webview.asWebviewUri(
         vscode.Uri.file(path.join(revealBasePath.fsPath, 'dist', 'reveal.css'))
