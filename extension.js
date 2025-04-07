@@ -14,6 +14,13 @@ function isValidRegex(str) {
     }
 }
 
+// Global variable to store slide state
+let globalSlideState = {
+    indexh: 0,
+    indexv: 0,
+    indexf: undefined
+}
+
 // Updates the preview with latest changes
 function updatePreview(filePath, context, panel) {
     const markdownContent = fs.readFileSync(filePath, 'utf8')
@@ -56,7 +63,6 @@ function updatePreview(filePath, context, panel) {
         hideInactiveCursor: config.get('hideInactiveCursor', true),
         hideCursorTime: config.get('hideCursorTime', 5000)
     }
-    const revealConfigString = JSON.stringify(revealConfig)
 
     panel.title = fileName
     panel.webview.html = getWebviewContent(
@@ -67,7 +73,8 @@ function updatePreview(filePath, context, panel) {
         selectedTheme,
         dataSeparator,
         dataSeparatorVertical,
-        revealConfigString
+        JSON.stringify(revealConfig),
+        JSON.stringify(globalSlideState)
     )
 }
 
@@ -87,39 +94,46 @@ function activate(context) {
             vscode.ViewColumn.Two,
             {
                 enableScripts: true,
+                retainContextWhenHidden: true, // Crucial for state preservation
                 localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
             }
         )
 
+        // message listener for state updates
+        panel.webview.onDidReceiveMessage(message => {
+            if (message.type === 'slideState') {
+                globalSlideState = message.state
+            }
+        }, undefined, context.subscriptions)
+
+        // Initial update
         updatePreview(filePath, context, panel)
 
-        let watcher = null
-        try {
-            watcher = fs.watch(filePath, { encoding: 'utf8' }, () => {
-                updatePreview(filePath, context, panel)
-            })
-        } catch (error) {
-            console.error(`Error watching file: ${error}`)
-        }
-
-        // Clean up watcher when panel is closed
-        panel.onDidDispose(() => {
-            if (watcher) {
-                watcher.close()
-            }
+        // file watcher
+        const watcher = fs.watch(filePath, { encoding: 'utf8' }, () => {
+            updatePreview(filePath, context, panel)
         })
 
-        vscode.workspace.onDidChangeTextDocument((event) => {
+        // clean up watcher when panel is closed
+        panel.onDidDispose(() => {
+            watcher.close()
+        })
+
+        // watch for editor changes
+        const textDocListener = vscode.workspace.onDidChangeTextDocument(event => {
             if (event.document.fileName === filePath) {
                 updatePreview(filePath, context, panel)
             }
         })
+
+        // clean up text document listener
+        context.subscriptions.push(textDocListener)
     })
 
     context.subscriptions.push(disposable)
 }
 
-// Generates HTML for preview
+// generates HTML for preview
 function getWebviewContent(
     fileName,
     markdownContent,
@@ -128,7 +142,8 @@ function getWebviewContent(
     theme,
     dataSeparator,
     dataSeparatorVertical,
-    revealConfigString
+    revealConfigString,
+    slideStateString
 ) {
     const revealBasePath = vscode.Uri.joinPath(context.extensionUri, 'media', 'reveal.js')
     const revealCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.css')).toString()
@@ -165,10 +180,31 @@ function getWebviewContent(
   <script src="${highlightPlugin}"></script>
   <script src="${notesPlugin}"></script>
   <script>
-    const config = ${revealConfigString};
+    const vscode = acquireVsCodeApi();
+    const initialSlideState = ${slideStateString};
+    const revealConfig = ${revealConfigString};
+    
     Reveal.initialize({
-      ...config,
+      ...revealConfig,
       plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+    }).then(() => {
+      // Restore initial slide state
+      if (initialSlideState) {
+        Reveal.slide(initialSlideState.indexh, initialSlideState.indexv, initialSlideState.indexf);
+      }
+      
+      // Update state on slide changes
+      Reveal.on('slidechanged', event => {
+        const state = {
+          indexh: event.indexh,
+          indexv: event.indexv,
+          indexf: event.indexf
+        };
+        vscode.postMessage({
+          type: 'slideState',
+          state: state
+        });
+      });
     });
   </script>
 </body>
