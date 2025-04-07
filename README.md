@@ -8,6 +8,8 @@ This VSCode extension allows you to preview Reveal.js slides from a Markdown fil
 - **Automatic updates:** Detects and reloads changes to Markdown file.
 - **Custom Reveal.js settings:** Configurable through VS Code settings.
 
+![demo](docs/demo.gif)
+
 ## Using the Extension
 Search `Reveal.js Live Preview` in the VS Code Extension Marketplace and install it. Once you have installed the **Reveal.js Live Preview** extension in VS Code, follow these steps to preview your slides:
 
