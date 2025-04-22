@@ -2,7 +2,7 @@
   "name": "revealjs-live-preview",
   "displayName": "Reveal.js Live Preview",
   "description": "Live preview of Reveal.js slides inside VSCode",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "prajwolamatya",
   "repository": {
     "type": "git",

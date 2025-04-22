@@ -26,6 +26,8 @@ function updatePreview(filePath, context, panel) {
     const markdownContent = fs.readFileSync(filePath, 'utf8')
     const fileName = path.basename(filePath, path.extname(filePath))
 
+    const processedContent = processImagePaths(markdownContent, filePath, panel.webview)
+
     // Get user settings
     const config = vscode.workspace.getConfiguration('revealjsLivePreview')
     const selectedTheme = config.get('theme', 'white')
@@ -67,15 +69,47 @@ function updatePreview(filePath, context, panel) {
     panel.title = fileName
     panel.webview.html = getWebviewContent(
         fileName,
-        markdownContent,
+        processedContent,
         panel.webview,
         context,
         selectedTheme,
         dataSeparator,
         dataSeparatorVertical,
         JSON.stringify(revealConfig),
-        JSON.stringify(globalSlideState)
+        JSON.stringify(globalSlideState),
+        filePath
     )
+}
+
+function processImagePaths(content, filePath, webview) {
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath))
+    const workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : path.dirname(filePath)
+    const fileDir = path.dirname(filePath)
+
+    // Process both relative and absolute paths
+    return content.replace(/!\[.*?\]\((.*?)\)/g, (match, imagePath) => {
+        try {
+            // Handle absolute paths within workspace
+            if (path.isAbsolute(imagePath) && workspacePath) {
+                const absolutePath = path.normalize(imagePath)
+                if (absolutePath.startsWith(workspacePath)) {
+                    const webviewUri = webview.asWebviewUri(vscode.Uri.file(absolutePath))
+                    return match.replace(imagePath, webviewUri.toString())
+                }
+            }
+            // Handle relative paths
+            else if (!imagePath.startsWith('http') && !imagePath.startsWith('data:')) {
+                const fullPath = path.resolve(fileDir, imagePath)
+                if (fs.existsSync(fullPath)) {
+                    const webviewUri = webview.asWebviewUri(vscode.Uri.file(fullPath))
+                    return match.replace(imagePath, webviewUri.toString())
+                }
+            }
+        } catch (error) {
+            console.error('Error processing image path:', error)
+        }
+        return match
+    })
 }
 
 // Activates the extension
@@ -94,46 +128,43 @@ function activate(context) {
             vscode.ViewColumn.Two,
             {
                 enableScripts: true,
-                retainContextWhenHidden: true, // Crucial for state preservation
-                localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
+                retainContextWhenHidden: true,
+                localResourceRoots: [
+                    vscode.Uri.joinPath(context.extensionUri, 'media'),
+                    vscode.Uri.file(path.dirname(filePath)) // Allow access to markdown file's directory
+                ]
             }
         )
 
-        // message listener for state updates
+        // Message listener for state updates
         panel.webview.onDidReceiveMessage(message => {
             if (message.type === 'slideState') {
                 globalSlideState = message.state
             }
         }, undefined, context.subscriptions)
 
-        // Initial update
         updatePreview(filePath, context, panel)
 
-        // file watcher
         const watcher = fs.watch(filePath, { encoding: 'utf8' }, () => {
             updatePreview(filePath, context, panel)
         })
 
-        // clean up watcher when panel is closed
         panel.onDidDispose(() => {
             watcher.close()
         })
 
-        // watch for editor changes
         const textDocListener = vscode.workspace.onDidChangeTextDocument(event => {
             if (event.document.fileName === filePath) {
                 updatePreview(filePath, context, panel)
             }
         })
 
-        // clean up text document listener
         context.subscriptions.push(textDocListener)
     })
 
     context.subscriptions.push(disposable)
 }
 
-// generates HTML for preview
 function getWebviewContent(
     fileName,
     markdownContent,
@@ -143,7 +174,8 @@ function getWebviewContent(
     dataSeparator,
     dataSeparatorVertical,
     revealConfigString,
-    slideStateString
+    slideStateString,
+    filePath
 ) {
     const revealBasePath = vscode.Uri.joinPath(context.extensionUri, 'media', 'reveal.js')
     const revealCss = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'dist', 'reveal.css')).toString()
@@ -155,6 +187,9 @@ function getWebviewContent(
     const highlightPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'highlight', 'highlight.js')).toString()
     const notesPlugin = webview.asWebviewUri(vscode.Uri.joinPath(revealBasePath, 'plugin', 'notes', 'notes.js')).toString()
 
+    const fileDir = path.dirname(filePath)
+    const baseHref = webview.asWebviewUri(vscode.Uri.file(fileDir)).toString()
+
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -164,6 +199,7 @@ function getWebviewContent(
   <link rel="stylesheet" href="${resetCss}">
   <link rel="stylesheet" href="${themeCss}">
   <link rel="stylesheet" href="${highlightThemeCss}">
+  <base href="${baseHref}/">
 </head>
 <body>
   <div class="reveal">
